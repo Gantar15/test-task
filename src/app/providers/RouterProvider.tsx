@@ -1,3 +1,4 @@
+import { BaseLayout, EmptyLayout } from "@/pages/layouts";
 import {
   RouterProvider,
   createBrowserRouter,
@@ -5,7 +6,8 @@ import {
   useRouteError,
 } from "react-router-dom";
 
-import { BaseLayout } from "@/pages/Layouts";
+import { homePageRoute } from "@/pages/home";
+import { page404Route } from "@/pages/page404";
 import { pathKeys } from "@/shared/lib/router";
 
 const BubbleError = (): null => {
@@ -23,8 +25,12 @@ const router = createBrowserRouter([
         children: [homePageRoute],
       },
       {
-        loader: async () => redirect(pathKeys.page404),
+        element: <EmptyLayout />,
+        children: [page404Route],
+      },
+      {
         path: "*",
+        loader: () => redirect(pathKeys.page404()),
       },
     ],
   },

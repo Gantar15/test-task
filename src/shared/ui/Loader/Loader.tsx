@@ -1,4 +1,4 @@
-import { Spinner } from "../spinner";
+import { Spinner } from "../Spinner";
 import styles from "./Loader.module.scss";
 
 type LoaderProps = {

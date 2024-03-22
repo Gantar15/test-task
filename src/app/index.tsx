@@ -11,6 +11,8 @@ function Providers() {
 const SuspensedProvider = withSuspense(Providers, {
   fallback: <Loader size="full" />,
 });
-export const Provider = withErrorBoundary(SuspensedProvider, {
+const ErrorBoundaryProvider = withErrorBoundary(SuspensedProvider, {
   fallbackRender: ({ error }) => <FullPageError error={error} />,
 });
+
+export default ErrorBoundaryProvider;

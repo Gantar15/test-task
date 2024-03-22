@@ -1,8 +1,7 @@
-import { type GenericError } from "@/shared/api/api.types";
 import styles from "./FullPageError.module.scss";
 
 type FullPageErrorProps = {
-  error: GenericError<any>;
+  error: Error;
 };
 
 export function FullPageError(props: FullPageErrorProps) {
@@ -13,7 +12,7 @@ export function FullPageError(props: FullPageErrorProps) {
       <div className={styles["inner-wrapper"]}>
         <div className="container">
           <h1 className="logo-font">Something went wrong:</h1>
-          <p>{error.explanation}</p>
+          <p>{error.message}</p>
         </div>
       </div>
     </div>
