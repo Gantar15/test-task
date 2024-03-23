@@ -2,6 +2,7 @@ import { BuildMode, BuildPaths } from "./config/build/types/types";
 
 import { buildWebpack } from "./config/build/buildWebpack";
 import path from "path";
+import { validateEnv } from "./config/environment";
 import webpack from "webpack";
 
 interface EnvVariables {
@@ -18,6 +19,8 @@ export default (env: EnvVariables) => {
     public: path.resolve(__dirname, "public"),
     src: path.resolve(__dirname, "src"),
   };
+
+  validateEnv();
 
   const config: webpack.Configuration = buildWebpack({
     port: env.port ?? 3000,

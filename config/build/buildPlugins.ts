@@ -6,7 +6,10 @@ import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import dotenv from "dotenv";
 import path from "path";
+
+dotenv.config();
 
 export function buildPlugins({
   mode,
@@ -23,6 +26,7 @@ export function buildPlugins({
     }),
     new DefinePlugin({
       __ENV__: JSON.stringify(mode),
+      "process.env": JSON.stringify(process.env),
     }),
   ];
 
