@@ -4,6 +4,6 @@ import { createElement } from "react";
 import { pathKeys } from "@/shared/lib/router";
 
 export const page404Route: RouteObject = {
-  path: pathKeys.page404(),,
+  path: pathKeys.page404(),,,
   element: createElement(Page404)
 };
