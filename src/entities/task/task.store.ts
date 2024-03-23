@@ -1,6 +1,7 @@
-import { StateCreator } from "zustand";
-import { TaskCreate, type Task, TaskUpdate } from "./task.type";
+import type { Task, TaskCreate, TaskUpdate } from "./task.type";
 import { createTask, deleteTask, getTasks, updateTask } from "./task.queries";
+
+import { StateCreator } from "zustand";
 
 export type State = {
   tasks: Task[];
@@ -39,7 +40,7 @@ export const createTaskSlice =
     create: async (task: TaskCreate) => {
       set({
         isTaskCreating: true,
-        taskCreateError: null,
+        taskCreateError: null
       });
 
       try {
@@ -59,7 +60,7 @@ export const createTaskSlice =
     update: async (id: number, task: TaskUpdate) => {
       set({
         isTaskUpdating: true,
-        taskUpdateError: null,
+        taskUpdateError: null
       });
 
       try {
@@ -80,7 +81,7 @@ export const createTaskSlice =
     delete: async (id: number) => {
       set({
         isTaskDeleting: true,
-        taskDeleteError: null,
+        taskDeleteError: null
       });
 
       try {
@@ -101,7 +102,7 @@ export const createTaskSlice =
     getRange: async (skip: number, take: number) => {
       set({
         isTasksLoading: true,
-        tasksError: null,
+        tasksError: null
       });
 
       try {
@@ -118,5 +119,5 @@ export const createTaskSlice =
           state.tasksError = err.message;
         });
       }
-    },
+    }
   });

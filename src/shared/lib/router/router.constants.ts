@@ -5,5 +5,5 @@ export const pathKeys = {
   },
   home: function () {
     return this.default;
-  },
+  }
 };

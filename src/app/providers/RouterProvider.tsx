@@ -3,7 +3,7 @@ import {
   RouterProvider,
   createBrowserRouter,
   redirect,
-  useRouteError,
+  useRouteError
 } from "react-router-dom";
 
 import { homePageRoute } from "@/pages/home";
@@ -22,18 +22,18 @@ const router = createBrowserRouter([
     children: [
       {
         element: <BaseLayout />,
-        children: [homePageRoute],
+        children: [homePageRoute]
       },
       {
         element: <EmptyLayout />,
-        children: [page404Route],
+        children: [page404Route]
       },
       {
         path: "*",
-        loader: () => redirect(pathKeys.page404()),
-      },
-    ],
-  },
+        loader: () => redirect(pathKeys.page404())
+      }
+    ]
+  }
 ]);
 
 export function BrowserRouter() {

@@ -17,7 +17,7 @@ export default (env: EnvVariables) => {
     entry: path.resolve(__dirname, "src", "index.tsx"),
     html: path.resolve(__dirname, "public", "index.html"),
     public: path.resolve(__dirname, "public"),
-    src: path.resolve(__dirname, "src"),
+    src: path.resolve(__dirname, "src")
   };
 
   validateEnv();
@@ -26,7 +26,7 @@ export default (env: EnvVariables) => {
     port: env.port ?? 3000,
     mode: env.mode ?? "development",
     paths,
-    analyzer: env.analyzer,
+    analyzer: env.analyzer
   });
 
   return config;

@@ -5,5 +5,5 @@ import { pathKeys } from "@/shared/lib/router";
 
 export const homePageRoute: RouteObject = {
   path: pathKeys.home(),
-  element: createElement(HomePage),
+  element: createElement(HomePage)
 };

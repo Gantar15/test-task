@@ -1,6 +1,6 @@
 import { FC, Suspense, SuspenseProps } from "react";
 
-export function withSuspense<WrappedProps extends Object>(
+export function withSuspense<WrappedProps extends object>(
   WrappedComponent: FC<WrappedProps>,
   suspenseProps: SuspenseProps
 ): FC<WrappedProps> {

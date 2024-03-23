@@ -6,5 +6,5 @@ const TasksList = () => {
 };
 
 export const SuspensedPopularTags = withSuspense(TasksList, {
-  fallback: <Loader />,
+  fallback: <Loader />
 });

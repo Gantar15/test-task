@@ -6,7 +6,7 @@ class ApiService {
     params?: Record<string, string | number>
   ): Promise<R> {
     const response = await axios.get(apiUrl, {
-      params: params,
+      params: params
     });
 
     return response.data;
@@ -14,7 +14,7 @@ class ApiService {
 
   async post<R>(apiUrl: string, data?: unknown): Promise<R> {
     const response = await axios.post(apiUrl, {
-      data: data,
+      data: data
     });
 
     return response.data;
@@ -22,7 +22,7 @@ class ApiService {
 
   async put<R>(apiUrl: string, data?: unknown): Promise<R> {
     const response = await axios.put(apiUrl, {
-      data: data,
+      data: data
     });
 
     return response.data;

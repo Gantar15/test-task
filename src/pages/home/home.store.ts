@@ -16,12 +16,12 @@ const initialTasksState: taskStore.State = {
   taskDeleteError: null,
 
   isTaskCreating: false,
-  taskCreateError: null,
+  taskCreateError: null
 };
 
 const devtoolsOptions: DevtoolsOptions = {
   name: "HomePage TasksStore",
-  enabled: process.env.NODE_ENV !== "production",
+  enabled: process.env.NODE_ENV !== "production"
 };
 
 export const useTaskStore = create<taskStore.TaskState>()(

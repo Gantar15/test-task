@@ -17,7 +17,7 @@ export async function getTasks(skip: number, limit: number) {
     process.env.API_URL + "/todos",
     {
       skip,
-      limit,
+      limit
     }
   );
   const { todos } = response;
