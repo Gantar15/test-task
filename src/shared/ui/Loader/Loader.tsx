@@ -1,17 +1,21 @@
-import { Spinner } from "../Spinner";
 import styles from "./Loader.module.scss";
 
 type LoaderProps = {
-  size?: "small" | "medium" | "large" | "full";
+  size?: "extra-small" | "small" | "medium" | "large" | "full";
 };
 
 export function Loader(props: LoaderProps) {
-  const { size = "medium" } = props;
-  const className = `${styles.wrapper} ${styles[`loader-${size}`]}`;
+  const { size = "small" } = props;
+  const className = `${styles.wrapper} ${styles[`loader_${size}`]}`;
 
   return (
     <div className={className}>
-      <Spinner />
+      <div className={styles["lds-ring"]}>
+        <div />
+        <div />
+        <div />
+        <div />
+      </div>
     </div>
   );
 }

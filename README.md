@@ -1,6 +1,6 @@
 # ⚡Test task
 
-Web-app for manage tasks.
+Web-app for manage tasks. You can visit this project [here](https://test-task-nine-phi.vercel.app/)
 
 # ⚙️ Tech Stack
 
@@ -22,7 +22,7 @@ npm install
 npm run start:dev
 ```
 
-After building the project, the resulting files appear in the build folder in the project root.
+After building the project, the resulting files appear in the `build` folder in the project root.
 
 To build development files, run:
 

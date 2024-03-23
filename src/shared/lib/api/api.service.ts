@@ -13,17 +13,13 @@ class ApiService {
   }
 
   async post<R>(apiUrl: string, data?: unknown): Promise<R> {
-    const response = await axios.post(apiUrl, {
-      data: data
-    });
+    const response = await axios.post(apiUrl, data);
 
     return response.data;
   }
 
   async put<R>(apiUrl: string, data?: unknown): Promise<R> {
-    const response = await axios.put(apiUrl, {
-      data: data
-    });
+    const response = await axios.put(apiUrl, data);
 
     return response.data;
   }

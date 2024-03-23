@@ -1,7 +1,12 @@
+import { DevtoolsOptions, devtools, persist } from "zustand/middleware";
 import type { Task, TaskCreate, TaskUpdate } from "./task.type";
 import { createTask, deleteTask, getTasks, updateTask } from "./task.queries";
 
 import { StateCreator } from "zustand";
+import { createWithEqualityFn } from "zustand/traditional";
+import { immer } from "zustand/middleware/immer";
+import { shallow } from "zustand/shallow";
+import { tasksfetchRangeCount } from "./task.config";
 
 export type State = {
   tasks: Task[];
@@ -19,8 +24,8 @@ export type State = {
 };
 
 export type Actions = {
-  create: (task: Task) => void;
-  update: (id: number, task: Task) => void;
+  create: (task: TaskCreate) => void;
+  update: (id: number, task: TaskUpdate) => void;
   delete: (id: number) => void;
   getRange: (skip: number, take: number) => void;
 };
@@ -107,7 +112,6 @@ export const createTaskSlice =
 
       try {
         const response = await getTasks(skip, take);
-        console.log(response);
         set((state) => {
           state.tasks.push(...response);
           state.isTasksLoading = false;
@@ -121,3 +125,40 @@ export const createTaskSlice =
       }
     }
   });
+
+const initialTasksState: State = {
+  tasks: [],
+  isTasksLoading: false,
+  tasksError: null,
+
+  isTaskUpdating: false,
+  taskUpdateError: null,
+
+  isTaskDeleting: false,
+  taskDeleteError: null,
+
+  isTaskCreating: false,
+  taskCreateError: null
+};
+
+const devtoolsOptions: DevtoolsOptions = {
+  name: "HomePage TasksStore",
+  enabled: process.env.NODE_ENV !== "production"
+};
+
+export const useTaskStore = createWithEqualityFn<TaskState>()(
+  persist(
+    devtools(immer(createTaskSlice(initialTasksState)), devtoolsOptions),
+    {
+      name: "HomePage TasksStore",
+      merge: (persistedState: State, currentState) => {
+        return {
+          ...currentState,
+          ...persistedState,
+          tasks: persistedState.tasks.slice(0, tasksfetchRangeCount)
+        };
+      }
+    }
+  ),
+  shallow
+);
