@@ -10,7 +10,8 @@
     "typecheck": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prettier": "prettier . --check"
+    "prettier": "prettier . --check",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "Pavlovskiy Egor",
@@ -66,10 +67,5 @@
     "react-router-dom": "^6.16.0",
     "yup": "^1.4.0",
     "zustand": "^4.5.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "eslint --quiet ."
-    }
   }
 }
