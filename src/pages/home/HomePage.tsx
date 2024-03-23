@@ -5,7 +5,7 @@ import { TasksPanel } from "@/widgets/tasks-panel";
 export const HomePage = () => {
   return (
     <>
-      <Stack maxWidth={"900px"}>
+      <Stack maxWidth={"900px"} w={"100%"}>
         <TasksPanel />
         <TasksList />
       </Stack>

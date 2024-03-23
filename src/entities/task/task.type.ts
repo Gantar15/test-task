@@ -1,14 +1,22 @@
 import * as yup from "yup";
 
-import { TaskResponseSchema } from "./task.schema";
+import {
+  CreateTaskSchema,
+  TaskResponseSchema,
+  UpdateTaskSchema
+} from "./task.schema";
 
 export type Task = Required<yup.InferType<typeof TaskResponseSchema>>;
 
-export type TaskUpdate = Partial<Omit<Task, "id">>;
+export type TaskCreate = Required<yup.InferType<typeof CreateTaskSchema>>;
 
-export type TaskCreate = Omit<Task, "id">;
+export type TaskUpdate = Required<yup.InferType<typeof UpdateTaskSchema>>;
 
-export type TaskRangeDTO = {
+export type TaskUpdateDto = Partial<Omit<Task, "id">>;
+
+export type TaskCreateDto = Partial<Omit<Task, "id">>;
+
+export type TaskRangeDto = {
   skip: number;
   take: number;
   total: number;

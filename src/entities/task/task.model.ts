@@ -1,5 +1,5 @@
 import { DevtoolsOptions, devtools, persist } from "zustand/middleware";
-import type { Task, TaskCreate, TaskUpdate } from "./task.type";
+import type { Task, TaskCreateDto, TaskUpdateDto } from "./task.type";
 import { createTask, deleteTask, getTasks, updateTask } from "./task.queries";
 
 import { StateCreator } from "zustand";
@@ -24,8 +24,8 @@ export type State = {
 };
 
 export type Actions = {
-  create: (task: TaskCreate) => void;
-  update: (id: number, task: TaskUpdate) => void;
+  create: (task: TaskCreateDto) => void;
+  update: (id: number, task: TaskUpdateDto) => void;
   delete: (id: number) => void;
   getRange: (skip: number, take: number) => void;
 };
@@ -42,7 +42,7 @@ export const createTaskSlice =
   > =>
   (set) => ({
     ...initialState,
-    create: async (task: TaskCreate) => {
+    create: async (task: TaskCreateDto) => {
       set({
         isTaskCreating: true,
         taskCreateError: null
@@ -62,7 +62,7 @@ export const createTaskSlice =
         });
       }
     },
-    update: async (id: number, task: TaskUpdate) => {
+    update: async (id: number, task: TaskUpdateDto) => {
       set({
         isTaskUpdating: true,
         taskUpdateError: null
@@ -78,6 +78,16 @@ export const createTaskSlice =
         });
       } catch (err) {
         set((state) => {
+          //#region This is a crutch. This is so because the api does not actually update the data
+          const taskIndex = state.tasks.findIndex((t) => t.id === id);
+          state.tasks[taskIndex] = {
+            id: state.tasks[taskIndex].id,
+            completed: task.completed || state.tasks[taskIndex].completed,
+            todo: task.todo || state.tasks[taskIndex].todo,
+            userId: task.userId || state.tasks[taskIndex].userId
+          } as Task;
+          //#endregion
+
           state.isTaskUpdating = false;
           state.taskUpdateError = err.message;
         });
@@ -99,6 +109,11 @@ export const createTaskSlice =
         });
       } catch (err) {
         set((state) => {
+          //#region This is a crutch. This is so because the api does not actually update the data
+          const taskIndex = state.tasks.findIndex((t) => t.id === id);
+          state.tasks.splice(taskIndex, 1);
+          //#endregion
+
           state.isTaskDeleting = false;
           state.taskDeleteError = err.message;
         });

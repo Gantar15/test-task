@@ -1,19 +1,19 @@
-import { Task, TaskCreate, TaskRangeDTO, TaskUpdate } from "./task.type";
+import { Task, TaskCreateDto, TaskRangeDto, TaskUpdateDto } from "./task.type";
 
 import { TaskResponseSchema } from "./task.schema";
 import { apiService } from "@/shared/lib/api";
 
-export async function createTask(task: TaskCreate) {
+export async function createTask(task: TaskCreateDto) {
   const response = await apiService.post<Task>(
-    process.env.API_URL + "/todos",
-    task
+    process.env.API_URL + "/todos/add",
+    { ...task, completed: false, userId: 1 }
   );
   await TaskResponseSchema.validate(response);
   return response;
 }
 
 export async function getTasks(skip: number, limit: number) {
-  const response = await apiService.get<TaskRangeDTO>(
+  const response = await apiService.get<TaskRangeDto>(
     process.env.API_URL + "/todos",
     {
       skip,
@@ -25,7 +25,7 @@ export async function getTasks(skip: number, limit: number) {
   return todos;
 }
 
-export async function updateTask(id: number, task: TaskUpdate) {
+export async function updateTask(id: number, task: TaskUpdateDto) {
   const response = await apiService.put<Task>(
     process.env.API_URL + "/todos/" + id,
     task

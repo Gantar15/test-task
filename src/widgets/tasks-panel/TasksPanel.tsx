@@ -1,5 +1,6 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
 
+import { CreateTaskForm } from "../create-task-form";
 import { Modal } from "@/shared/ui/Modal";
 import styles from "./TasksPanel.module.scss";
 import { taskStore } from "@/entities/task";
@@ -19,6 +20,10 @@ export const TasksPanel = () => {
     setIsNewTaskModalOpen(false);
   };
 
+  const newTaskSubmitHandler = () => {
+    setIsNewTaskModalOpen(false);
+  };
+
   return (
     <div>
       <Modal
@@ -29,14 +34,19 @@ export const TasksPanel = () => {
           header: styles.modal__header
         }}
       >
-        asdasd
+        <CreateTaskForm onSubmit={newTaskSubmitHandler} />
       </Modal>
-      <Flex justifyContent={"space-between"} alignItems={"center"} w={"100%"}>
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        w={"100%"}
+        columnGap={"15px"}
+      >
         <Text>
           Total: <Text as={"b"}>{tasks.length}</Text>
         </Text>
-        <Button colorScheme="whatsapp" onClick={newTaskClickHandler}>
-          New task
+        <Button colorScheme="messenger" onClick={newTaskClickHandler}>
+          + New task
         </Button>
       </Flex>
     </div>
