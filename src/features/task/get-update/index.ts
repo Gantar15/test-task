@@ -1,0 +1,1 @@
+export { GetUpdate } from "./GetUpdate";

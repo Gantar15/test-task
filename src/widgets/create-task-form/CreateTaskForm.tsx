@@ -24,7 +24,8 @@ export const CreateTaskForm = ({ onSubmit }: CreateTaskFormProps) => {
     isTaskCreating: state.isTaskCreating
   }));
   const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(CreateTaskSchema)
+    resolver: yupResolver(CreateTaskSchema),
+    mode: "onChange"
   });
   const [isTaskSubmitted, setIsTaskSubmitted] = useState(false);
   const { errors } = formState;

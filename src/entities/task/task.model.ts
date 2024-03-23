@@ -62,6 +62,7 @@ export const createTaskSlice =
         });
       }
     },
+
     update: async (id: number, task: TaskUpdateDto) => {
       set({
         isTaskUpdating: true,
@@ -71,28 +72,33 @@ export const createTaskSlice =
       try {
         const response = await updateTask(id, task);
         set((state) => {
-          const taskIndex = state.tasks.findIndex((t) => t.id === response.id);
-          state.tasks[taskIndex] = response;
+          // const taskIndex = state.tasks.findIndex((t) => t.id === response.id);
+          // state.tasks[taskIndex] = response;
           state.isTaskUpdating = false;
           state.taskUpdateError = null;
         });
       } catch (err) {
         set((state) => {
-          //#region This is a crutch. This is so because the api does not actually update the data
-          const taskIndex = state.tasks.findIndex((t) => t.id === id);
-          state.tasks[taskIndex] = {
-            id: state.tasks[taskIndex].id,
-            completed: task.completed || state.tasks[taskIndex].completed,
-            todo: task.todo || state.tasks[taskIndex].todo,
-            userId: task.userId || state.tasks[taskIndex].userId
-          } as Task;
-          //#endregion
-
           state.isTaskUpdating = false;
           state.taskUpdateError = err.message;
         });
       }
+      //#region This is a crutch. This is so because the api does not actually update the data
+      set((state) => {
+        const taskIndex = state.tasks.findIndex((t) => t.id === id);
+        const updatingTask = state.tasks[taskIndex];
+        updatingTask.completed =
+          task.completed !== undefined
+            ? task.completed
+            : updatingTask.completed;
+        updatingTask.todo =
+          task.todo !== undefined ? task.todo : updatingTask.todo;
+        updatingTask.userId =
+          task.userId !== undefined ? task.userId : updatingTask.userId;
+      });
+      //#endregion
     },
+
     delete: async (id: number) => {
       set({
         isTaskDeleting: true,
@@ -119,6 +125,7 @@ export const createTaskSlice =
         });
       }
     },
+
     getRange: async (skip: number, take: number) => {
       set({
         isTasksLoading: true,

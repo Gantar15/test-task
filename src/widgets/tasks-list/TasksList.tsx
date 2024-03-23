@@ -1,8 +1,12 @@
 import { DeleteTask, TaskCompletedCheckbox } from "@/features/task";
 import { HStack, Stack, Text } from "@chakra-ui/react";
 import { taskStore, taskType } from "@/entities/task";
+import { useEffect, useState } from "react";
 
+import CheckMarkIcon from "@/shared/assets/icons/check-mark.svg";
+import CloseIcon from "@/shared/assets/icons/close.svg";
 import EditIcon from "@/shared/assets/icons/edit.svg";
+import { GetUpdate } from "@/features/task/get-update";
 import { Loader } from "@/shared/ui/Loader";
 import { withSuspense } from "@/shared/lib/react";
 
@@ -24,7 +28,43 @@ interface TaskProps {
   task: taskType.Task;
 }
 const Task = ({ task }: TaskProps) => {
-  const editClickHandler = () => {};
+  const [isTaskEditingMode, setIsTaskEditingMode] = useState(false);
+  const [isTaskUpdateClicked, setIsTaskUpdateClicked] = useState(false);
+  const [todo, setTodo] = useState(task.todo);
+  const [todoError, setTodoError] = useState<string | null>(null);
+  const { updateTask, isUpdating } = taskStore.useTaskStore((state) => ({
+    updateTask: state.update,
+    isUpdating: state.isTaskUpdating
+  }));
+
+  useEffect(() => {
+    if (!isUpdating && isTaskEditingMode && isTaskUpdateClicked) {
+      setIsTaskUpdateClicked(false);
+      setIsTaskEditingMode(false);
+    }
+  }, [isUpdating]);
+
+  const editClickHandler = () => {
+    setIsTaskEditingMode(true);
+  };
+
+  const exitEditClickHandler = () => {
+    setIsTaskEditingMode(false);
+  };
+
+  const changeTodoHandler = (text: string) => {
+    setTodo(text);
+  };
+
+  const todoErrorHandler = (errorMessage: string) => {
+    setTodoError(errorMessage);
+  };
+
+  const updateTaskHandler = () => {
+    if (todoError) return;
+    setIsTaskUpdateClicked(true);
+    updateTask(task.id, { todo });
+  };
 
   return (
     <HStack
@@ -35,18 +75,55 @@ const Task = ({ task }: TaskProps) => {
       borderRadius={4}
     >
       <HStack>
-        <TaskCompletedCheckbox id={task.id} completed={task.completed} />
-        <Text>{task.todo}</Text>
+        {isTaskEditingMode ? (
+          <GetUpdate
+            onTodoChange={changeTodoHandler}
+            onTodoError={todoErrorHandler}
+            defaultTodo={task.todo}
+          />
+        ) : (
+          <>
+            <TaskCompletedCheckbox id={task.id} completed={task.completed} />
+            <Text>{task.todo}</Text>
+          </>
+        )}
       </HStack>
       <HStack spacing={3}>
-        <DeleteTask id={task.id} />
-        <EditIcon
-          style={{ cursor: "pointer" }}
-          fill="#787878"
-          onClick={editClickHandler}
-          width={16}
-          height={16}
-        />
+        {isTaskEditingMode ? (
+          <>
+            {isUpdating && isTaskUpdateClicked ? (
+              <Loader size="extra-small" />
+            ) : (
+              <>
+                <CheckMarkIcon
+                  onClick={updateTaskHandler}
+                  style={{ cursor: todoError ? "auto" : "pointer" }}
+                  fill={todoError ? "#737373" : "#32a852"}
+                  width={17}
+                  height={17}
+                />
+                <CloseIcon
+                  onClick={exitEditClickHandler}
+                  style={{ cursor: "pointer" }}
+                  fill="#787878"
+                  width={16}
+                  height={16}
+                />
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            <DeleteTask id={task.id} />
+            <EditIcon
+              onClick={editClickHandler}
+              style={{ cursor: "pointer" }}
+              fill="#787878"
+              width={16}
+              height={16}
+            />
+          </>
+        )}
       </HStack>
     </HStack>
   );
