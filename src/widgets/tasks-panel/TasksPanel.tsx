@@ -45,7 +45,7 @@ export const TasksPanel = () => {
         <Text>
           Total: <Text as={"b"}>{tasks.length}</Text>
         </Text>
-        <Button colorScheme="messenger" onClick={newTaskClickHandler}>
+        <Button colorScheme="blue" onClick={newTaskClickHandler}>
           + New task
         </Button>
       </Flex>

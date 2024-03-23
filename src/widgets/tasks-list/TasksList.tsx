@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import CheckMarkIcon from "@/shared/assets/icons/check-mark.svg";
 import CloseIcon from "@/shared/assets/icons/close.svg";
 import EditIcon from "@/shared/assets/icons/edit.svg";
-import { GetUpdate } from "@/features/task/get-update";
+import { GetUpdate } from "@/features/task";
 import { Loader } from "@/shared/ui/Loader";
 import { withSuspense } from "@/shared/lib/react";
 
@@ -98,7 +98,7 @@ const Task = ({ task }: TaskProps) => {
                 <CheckMarkIcon
                   onClick={updateTaskHandler}
                   style={{ cursor: todoError ? "auto" : "pointer" }}
-                  fill={todoError ? "#737373" : "#32a852"}
+                  fill={todoError ? "#a6a6a6" : "#32a852"}
                   width={17}
                   height={17}
                 />

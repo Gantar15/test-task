@@ -11,7 +11,6 @@ import { taskStore, taskType } from "@/entities/task";
 import { useEffect, useState } from "react";
 
 import { CreateTaskSchema } from "@/entities/task/task.schema";
-import { Loader } from "@/shared/ui/Loader";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -62,8 +61,12 @@ export const CreateTaskForm = ({ onSubmit }: CreateTaskFormProps) => {
             )}
           </div>
 
-          <Button type="submit">
-            {isTaskCreating ? <Loader size="extra-small" /> : "Create"}
+          <Button
+            type="submit"
+            isLoading={isTaskCreating}
+            isDisabled={!!errors.todo || isTaskCreating}
+          >
+            Create
           </Button>
         </Stack>
       </form>

@@ -51,6 +51,10 @@ export const createTaskSlice =
       try {
         const response = await createTask(task);
         set((state) => {
+          //#region This is a crutch. This is so because the api does not actually update the data
+          response.id = state.tasks.sort((a, b) => b.id - a.id)[0].id + 1;
+          //#endregion
+          console.log(response.id);
           state.tasks.unshift(response);
           state.isTaskCreating = false;
           state.taskCreateError = null;
