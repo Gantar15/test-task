@@ -6,7 +6,4 @@ import { pathKeys } from "@/shared/lib/router";
 export const homePageRoute: RouteObject = {
   path: pathKeys.home(),
   element: createElement(HomePage),
-  // loader: async (args) => {
-  //   return args;
-  // },
 };

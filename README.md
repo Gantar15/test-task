@@ -4,6 +4,7 @@ Web-app for manage tasks.
 
 # ⚙️ Tech Stack
 
+    * FSD (Feature-Sliced Design)
     * React
     * Webpack
     * Zustand
