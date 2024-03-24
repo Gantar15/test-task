@@ -13,6 +13,7 @@ export type State = {
   totalTasksCount: number;
   tasks: Task[];
   updatedTasks: Task[];
+  deletedTasksIds: number[];
   isTasksLoading: boolean;
   tasksError: string | null;
 
@@ -31,6 +32,7 @@ export type Actions = {
   update: (id: number, task: TaskUpdateDto) => void;
   delete: (id: number) => void;
   getRange: (skip: number, take: number) => void;
+  resetTodos: () => void;
 };
 
 export type TaskState = State & Actions;
@@ -58,6 +60,7 @@ export const createTaskSlice =
           response.id =
             Math.max(
               [...state.tasks].sort((a, b) => b.id - a.id)[0]?.id || 0,
+              [...state.deletedTasksIds].sort((a, b) => b - a)[0] || 0,
               state.totalTasksCount
             ) + 1;
           //#endregion
@@ -127,29 +130,31 @@ export const createTaskSlice =
       try {
         const response = await deleteTask(id);
         set((state) => {
-          const taskIndex = state.tasks.findIndex((t) => t.id === response.id);
-          state.tasks.splice(taskIndex, 1);
+          // const taskIndex = state.tasks.findIndex((t) => t.id === response.id);
+          // state.tasks.splice(taskIndex, 1);
           state.isTaskDeleting = false;
           state.taskDeleteError = null;
         });
       } catch (err) {
         set((state) => {
-          //#region This is a crutch. This is so because the api does not actually update the data
-          const taskIndex = state.tasks.findIndex((t) => t.id === id);
-          state.tasks.splice(taskIndex, 1);
-
-          const updatedListTaskIndex = state.updatedTasks.findIndex(
-            (t) => t.id === id
-          );
-          if (updatedListTaskIndex !== -1) {
-            state.updatedTasks.splice(updatedListTaskIndex, 1);
-          }
-          //#endregion
-
           state.isTaskDeleting = false;
           state.taskDeleteError = err.message;
         });
       }
+      //#region This is a crutch. This is so because the api does not actually update the data
+      set((state) => {
+        const taskIndex = state.tasks.findIndex((t) => t.id === id);
+        state.tasks.splice(taskIndex, 1);
+        state.deletedTasksIds.push(id);
+
+        const updatedListTaskIndex = state.updatedTasks.findIndex(
+          (t) => t.id === id
+        );
+        if (updatedListTaskIndex !== -1) {
+          state.updatedTasks.splice(updatedListTaskIndex, 1);
+        }
+      });
+      //#endregion
     },
 
     getRange: async (skip: number, take: number) => {
@@ -161,10 +166,10 @@ export const createTaskSlice =
       try {
         const response = await getTasks(skip, take);
         set((state) => {
-          response.todos = replaceArrayElements(
+          response.todos = replaceArrayElements<Task>(
             response.todos,
             state.updatedTasks
-          );
+          ).filter((t) => !state.deletedTasksIds.includes(t.id));
           state.tasks.push(...response.todos);
           state.isTasksLoading = false;
           state.tasksError = null;
@@ -176,6 +181,13 @@ export const createTaskSlice =
           state.tasksError = err.message;
         });
       }
+    },
+
+    resetTodos: () => {
+      set((state) => {
+        state.updatedTasks = [];
+        state.deletedTasksIds = [];
+      });
     }
   });
 
@@ -183,6 +195,7 @@ const initialTasksState: State = {
   totalTasksCount: 0,
   tasks: [],
   updatedTasks: [],
+  deletedTasksIds: [],
   isTasksLoading: false,
   tasksError: null,
 
@@ -210,11 +223,12 @@ export const useTaskStore = createWithEqualityFn<TaskState>()(
         const tasks = replaceArrayElements<Task>(
           persistedState.tasks.slice(0, tasksfetchRangeCount),
           persistedState.updatedTasks
-        );
+        ).filter((task) => !persistedState.deletedTasksIds.includes(task.id));
         return {
           ...currentState,
           totalTasksCount: persistedState.totalTasksCount,
           updatedTasks: persistedState.updatedTasks,
+          deletedTasksIds: persistedState.deletedTasksIds,
           tasks: tasks
         };
       }

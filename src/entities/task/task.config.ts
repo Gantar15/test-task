@@ -1,1 +1,1 @@
-export const tasksfetchRangeCount = 10;
+export const tasksfetchRangeCount = 15;

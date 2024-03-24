@@ -1,5 +1,5 @@
+import { Button, HStack, Stack, Text, VStack } from "@chakra-ui/react";
 import { DeleteTask, TaskCompletedCheckbox } from "@/features/task";
-import { HStack, Stack, Text, VStack } from "@chakra-ui/react";
 import { taskStore, taskType } from "@/entities/task";
 import { useEffect, useMemo, useState } from "react";
 
@@ -13,37 +13,42 @@ import { tasksfetchRangeCount } from "@/entities/task/task.config";
 import { withSuspense } from "@/shared/lib/react";
 
 const List = () => {
-  const { tasks, totalTasksCount, isTasksLoading, getTasksRange } =
-    taskStore.useTaskStore((state) => ({
-      tasks: state.tasks,
-      totalTasksCount: state.totalTasksCount,
-      isTasksLoading: state.isTasksLoading,
-      getTasksRange: state.getRange
-    }));
-
-  const handleRenderNextRows = () => {
-    getTasksRange(tasks.length, tasksfetchRangeCount);
-  };
+  const {
+    tasks,
+    totalTasksCount,
+    isTasksLoading,
+    getTasksRange,
+    deletedTasksIds
+  } = taskStore.useTaskStore((state) => ({
+    tasks: state.tasks,
+    totalTasksCount: state.totalTasksCount,
+    isTasksLoading: state.isTasksLoading,
+    getTasksRange: state.getRange,
+    deletedTasksIds: state.deletedTasksIds
+  }));
 
   const hasMoreRows = useMemo(() => {
     if (isTasksLoading) return false;
-    return tasks.length < totalTasksCount;
-  }, [tasks, totalTasksCount, isTasksLoading]);
+    return tasks.length < totalTasksCount - deletedTasksIds.length;
+  }, [tasks, totalTasksCount, isTasksLoading, deletedTasksIds]);
+
+  const renderNextRowsHandler = () => {
+    getTasksRange(tasks.length + deletedTasksIds.length, tasksfetchRangeCount);
+  };
+
+  const fetchMoreHandler = () => {
+    if (hasMoreRows) {
+      renderNextRowsHandler();
+    }
+  };
 
   return (
     <InfiniteScroll
       style={{ overflow: "visible" }}
       dataLength={tasks.length}
-      next={handleRenderNextRows}
+      next={renderNextRowsHandler}
       hasMore={hasMoreRows}
-      loader={
-        tasks.length === 0 ||
-        !isTasksLoading || (
-          <VStack p={5}>
-            <Loader />
-          </VStack>
-        )
-      }
+      loader={null}
       scrollableTarget={name + "-scrollable-table"}
     >
       <Stack spacing={3}>
@@ -51,6 +56,16 @@ const List = () => {
         {tasks.map((task) => (
           <Task key={task.id} task={task} />
         ))}
+        <Button
+          isLoading={tasks.length !== 0 && isTasksLoading}
+          w={"min-content"}
+          margin={"0 auto"}
+          variant={"ghost"}
+          onClick={fetchMoreHandler}
+          isDisabled={!hasMoreRows}
+        >
+          Load more
+        </Button>
       </Stack>
     </InfiniteScroll>
   );

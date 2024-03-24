@@ -11,6 +11,7 @@ export const homePageRoute: RouteObject = {
   loader: (...args) => {
     const todoState = taskStore.useTaskStore.getState();
     if (todoState.tasks.length === 0) {
+      todoState.resetTodos();
       todoState.getRange(0, taskConfig.tasksfetchRangeCount);
     }
 
