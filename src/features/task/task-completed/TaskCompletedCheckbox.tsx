@@ -16,14 +16,14 @@ export const TaskCompletedCheckbox = ({
   }));
   const [isChecked, setIsChecked] = useState(completed);
 
+  useEffect(() => {
+    setIsChecked(completed);
+  }, [completed]);
+
   const toggleCheckboxHandler = () => {
     setIsChecked((currentState) => !currentState);
     update(id, { completed: !completed });
   };
-
-  useEffect(() => {
-    setIsChecked(completed);
-  }, [completed]);
 
   return <Checkbox isChecked={isChecked} onChange={toggleCheckboxHandler} />;
 };

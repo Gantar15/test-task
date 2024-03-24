@@ -42,12 +42,15 @@ export const TasksPanel = () => {
         w={"100%"}
         columnGap={"15px"}
       >
-        <Text>
-          Total: <Text as={"b"}>{tasks.length}</Text>
-        </Text>
         <Button colorScheme="blue" onClick={newTaskClickHandler}>
           + New task
         </Button>
+        <Text fontSize={14}>
+          Total tasks:{" "}
+          <Text fontSize={16} as={"b"}>
+            {tasks.length}
+          </Text>
+        </Text>
       </Flex>
     </div>
   );

@@ -52,9 +52,9 @@ export const createTaskSlice =
         const response = await createTask(task);
         set((state) => {
           //#region This is a crutch. This is so because the api does not actually update the data
-          response.id = state.tasks.sort((a, b) => b.id - a.id)[0].id + 1;
+          response.id =
+            (state.tasks.sort((a, b) => b.id - a.id)[0]?.id || 0) + 1;
           //#endregion
-          console.log(response.id);
           state.tasks.unshift(response);
           state.isTaskCreating = false;
           state.taskCreateError = null;
@@ -180,7 +180,6 @@ export const useTaskStore = createWithEqualityFn<TaskState>()(
       merge: (persistedState: State, currentState) => {
         return {
           ...currentState,
-          ...persistedState,
           tasks: persistedState.tasks.slice(0, tasksfetchRangeCount)
         };
       }

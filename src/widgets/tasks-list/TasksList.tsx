@@ -17,6 +17,7 @@ const List = () => {
   }));
   return (
     <Stack spacing={3}>
+      {tasks.length === 0 && <Text textAlign={"center"}>No tasks found</Text>}
       {isTasksLoading && <Loader />}
       {!isTasksLoading &&
         tasks.map((task) => <Task key={task.id} task={task} />)}
