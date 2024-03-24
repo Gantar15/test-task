@@ -1,27 +1,58 @@
 import { DeleteTask, TaskCompletedCheckbox } from "@/features/task";
-import { HStack, Stack, Text } from "@chakra-ui/react";
+import { HStack, Stack, Text, VStack } from "@chakra-ui/react";
 import { taskStore, taskType } from "@/entities/task";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import CheckMarkIcon from "@/shared/assets/icons/check-mark.svg";
 import CloseIcon from "@/shared/assets/icons/close.svg";
 import EditIcon from "@/shared/assets/icons/edit.svg";
 import { GetUpdate } from "@/features/task";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { Loader } from "@/shared/ui/Loader";
+import { tasksfetchRangeCount } from "@/entities/task/task.config";
 import { withSuspense } from "@/shared/lib/react";
 
 const List = () => {
-  const { tasks, isTasksLoading } = taskStore.useTaskStore((state) => ({
-    tasks: state.tasks,
-    isTasksLoading: state.isTasksLoading
-  }));
+  const { tasks, totalTasksCount, isTasksLoading, getTasksRange } =
+    taskStore.useTaskStore((state) => ({
+      tasks: state.tasks,
+      totalTasksCount: state.totalTasksCount,
+      isTasksLoading: state.isTasksLoading,
+      getTasksRange: state.getRange
+    }));
+
+  const handleRenderNextRows = () => {
+    getTasksRange(tasks.length, tasksfetchRangeCount);
+  };
+
+  const hasMoreRows = useMemo(() => {
+    if (isTasksLoading) return false;
+    return tasks.length < totalTasksCount;
+  }, [tasks, totalTasksCount, isTasksLoading]);
+
   return (
-    <Stack spacing={3}>
-      {tasks.length === 0 && <Text textAlign={"center"}>No tasks found</Text>}
-      {isTasksLoading && <Loader />}
-      {!isTasksLoading &&
-        tasks.map((task) => <Task key={task.id} task={task} />)}
-    </Stack>
+    <InfiniteScroll
+      style={{ overflow: "visible" }}
+      dataLength={tasks.length}
+      next={handleRenderNextRows}
+      hasMore={hasMoreRows}
+      loader={
+        tasks.length === 0 ||
+        !isTasksLoading || (
+          <VStack p={5}>
+            <Loader />
+          </VStack>
+        )
+      }
+      scrollableTarget={name + "-scrollable-table"}
+    >
+      <Stack spacing={3}>
+        {tasks.length === 0 && <Text textAlign={"center"}>No tasks found</Text>}
+        {tasks.map((task) => (
+          <Task key={task.id} task={task} />
+        ))}
+      </Stack>
+    </InfiniteScroll>
   );
 };
 

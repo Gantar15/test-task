@@ -5,11 +5,14 @@ import { createTask, deleteTask, getTasks, updateTask } from "./task.queries";
 import { StateCreator } from "zustand";
 import { createWithEqualityFn } from "zustand/traditional";
 import { immer } from "zustand/middleware/immer";
+import { replaceArrayElements } from "./utils/replaceArrayElements";
 import { shallow } from "zustand/shallow";
 import { tasksfetchRangeCount } from "./task.config";
 
 export type State = {
+  totalTasksCount: number;
   tasks: Task[];
+  updatedTasks: Task[];
   isTasksLoading: boolean;
   tasksError: string | null;
 
@@ -53,7 +56,10 @@ export const createTaskSlice =
         set((state) => {
           //#region This is a crutch. This is so because the api does not actually update the data
           response.id =
-            (state.tasks.sort((a, b) => b.id - a.id)[0]?.id || 0) + 1;
+            Math.max(
+              [...state.tasks].sort((a, b) => b.id - a.id)[0]?.id || 0,
+              state.totalTasksCount
+            ) + 1;
           //#endregion
           state.tasks.unshift(response);
           state.isTaskCreating = false;
@@ -99,6 +105,15 @@ export const createTaskSlice =
           task.todo !== undefined ? task.todo : updatingTask.todo;
         updatingTask.userId =
           task.userId !== undefined ? task.userId : updatingTask.userId;
+
+        const updatedListTaskIndex = state.updatedTasks.findIndex(
+          (t) => t.id === id
+        );
+        if (updatedListTaskIndex !== -1) {
+          state.updatedTasks[updatedListTaskIndex] = updatingTask;
+        } else {
+          state.updatedTasks.push(updatingTask);
+        }
       });
       //#endregion
     },
@@ -122,6 +137,13 @@ export const createTaskSlice =
           //#region This is a crutch. This is so because the api does not actually update the data
           const taskIndex = state.tasks.findIndex((t) => t.id === id);
           state.tasks.splice(taskIndex, 1);
+
+          const updatedListTaskIndex = state.updatedTasks.findIndex(
+            (t) => t.id === id
+          );
+          if (updatedListTaskIndex !== -1) {
+            state.updatedTasks.splice(updatedListTaskIndex, 1);
+          }
           //#endregion
 
           state.isTaskDeleting = false;
@@ -139,9 +161,14 @@ export const createTaskSlice =
       try {
         const response = await getTasks(skip, take);
         set((state) => {
-          state.tasks.push(...response);
+          response.todos = replaceArrayElements(
+            response.todos,
+            state.updatedTasks
+          );
+          state.tasks.push(...response.todos);
           state.isTasksLoading = false;
           state.tasksError = null;
+          state.totalTasksCount = response.total;
         });
       } catch (err) {
         set((state) => {
@@ -153,7 +180,9 @@ export const createTaskSlice =
   });
 
 const initialTasksState: State = {
+  totalTasksCount: 0,
   tasks: [],
+  updatedTasks: [],
   isTasksLoading: false,
   tasksError: null,
 
@@ -168,7 +197,7 @@ const initialTasksState: State = {
 };
 
 const devtoolsOptions: DevtoolsOptions = {
-  name: "HomePage TasksStore",
+  name: "TasksStore",
   enabled: process.env.NODE_ENV !== "production"
 };
 
@@ -176,11 +205,17 @@ export const useTaskStore = createWithEqualityFn<TaskState>()(
   persist(
     devtools(immer(createTaskSlice(initialTasksState)), devtoolsOptions),
     {
-      name: "HomePage TasksStore",
+      name: "TasksStore",
       merge: (persistedState: State, currentState) => {
+        const tasks = replaceArrayElements<Task>(
+          persistedState.tasks.slice(0, tasksfetchRangeCount),
+          persistedState.updatedTasks
+        );
         return {
           ...currentState,
-          tasks: persistedState.tasks.slice(0, tasksfetchRangeCount)
+          totalTasksCount: persistedState.totalTasksCount,
+          updatedTasks: persistedState.updatedTasks,
+          tasks: tasks
         };
       }
     }

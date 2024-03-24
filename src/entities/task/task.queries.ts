@@ -22,7 +22,7 @@ export async function getTasks(skip: number, limit: number) {
   );
   const { todos } = response;
   Promise.all(todos.map((t) => TaskResponseSchema.validate(t)));
-  return todos;
+  return response;
 }
 
 export async function updateTask(id: number, task: TaskUpdateDto) {
