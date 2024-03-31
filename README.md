@@ -9,9 +9,12 @@ Web-app for manage tasks. You can visit this project [here](https://test-task-ni
     * Webpack
     * Zustand
     * React-router-dom
-    * React-hook-from
+    * React-hook-form
     * Yup
     * Axios
+    * ESLint
+    * Prettier
+    * Husky
 
 # 🧬 Running locally
 
